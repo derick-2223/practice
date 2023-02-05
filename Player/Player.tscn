@@ -1,0 +1,588 @@
+[gd_scene load_steps=54 format=2]
+
+[ext_resource path="res://Player/Player.gd" type="Script" id=1]
+[ext_resource path="res://Player/Player.png" type="Texture" id=2]
+[ext_resource path="res://Hurtboxes + Hitboxes/HitBox.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Player/SwordHitBox.gd" type="Script" id=4]
+[ext_resource path="res://Hurtboxes + Hitboxes/HurtBox.tscn" type="PackedScene" id=5]
+[ext_resource path="res://UI/HealthUI.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Shadows/MediumShadow.png" type="Texture" id=7]
+[ext_resource path="res://Music and Sounds/Swipe.wav" type="AudioStream" id=8]
+[ext_resource path="res://Player/EnemyDetectionZone.tscn" type="PackedScene" id=10]
+
+[sub_resource type="Shader" id=61]
+code = "shader_type canvas_item;
+
+uniform bool active = false;
+
+void fragment() {
+	vec4 previous_color = texture(TEXTURE, UV);
+	vec4 white_color = vec4(1.0, 1.0, 1.0, previous_color.a);
+	vec4 new_color = previous_color;
+	if (active == true) {
+		new_color = white_color;
+	}
+	COLOR = new_color;
+	
+}"
+
+[sub_resource type="ShaderMaterial" id=62]
+resource_local_to_scene = true
+shader = SubResource( 61 )
+shader_param/active = false
+
+[sub_resource type="CapsuleShape2D" id=1]
+radius = 4.0
+height = 4.0
+
+[sub_resource type="Animation" id=65]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:material:shader_param/active")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ true ]
+}
+
+[sub_resource type="Animation" id=63]
+resource_name = "start"
+length = 0.2
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:material:shader_param/active")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
+
+[sub_resource type="Animation" id=64]
+resource_name = "stop"
+length = 0.1
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:material:shader_param/active")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
+
+[sub_resource type="Animation" id=2]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 1 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("HitboxPivot:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("HitboxPivot/SwordHitBox/CollisionShape2D:disabled")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ true ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("HitboxPivot/SwordHitBox:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector2( 17, -2 ) ]
+}
+
+[sub_resource type="Animation" id=36]
+resource_name = "attack_left"
+length = 0.4
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 32, 33, 34, 35 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("HitboxPivot:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0.2 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("HitboxPivot/SwordHitBox/CollisionShape2D:disabled")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0.1, 0.3 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+tracks/3/type = "audio"
+tracks/3/path = NodePath("AudioStreamPlayer")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"clips": [ {
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource( 8 )
+} ],
+"times": PoolRealArray( 0.1 )
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("HitboxPivot/SwordHitBox:position")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector2( 17, -3 ) ]
+}
+tracks/5/type = "method"
+tracks/5/path = NodePath(".")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PoolRealArray( 0.4 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "attack_animation_finisihed"
+} ]
+}
+
+[sub_resource type="Animation" id=37]
+resource_name = "attack_right"
+length = 0.4
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 24, 25, 26, 27 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("HitboxPivot:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0.2 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 180.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("HitboxPivot/SwordHitBox/CollisionShape2D:disabled")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0.1, 0.3 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+tracks/3/type = "audio"
+tracks/3/path = NodePath("AudioStreamPlayer")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"clips": [ {
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource( 8 )
+} ],
+"times": PoolRealArray( 0.1 )
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("HitboxPivot/SwordHitBox:position")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector2( 17, 3 ) ]
+}
+tracks/5/type = "method"
+tracks/5/path = NodePath(".")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PoolRealArray( 0.4 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "attack_animation_finisihed"
+} ]
+}
+
+[sub_resource type="Animation" id=9]
+resource_name = "idle_left"
+length = 0.1
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ 12 ]
+}
+
+[sub_resource type="Animation" id=4]
+resource_name = "idle_right"
+length = 0.1
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ 0 ]
+}
+
+[sub_resource type="Animation" id=7]
+resource_name = "run_left"
+length = 0.6
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3, 0.4, 0.5 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 13, 14, 15, 16, 17, 12 ]
+}
+
+[sub_resource type="Animation" id=3]
+resource_name = "run_right"
+length = 0.6
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3, 0.4, 0.5 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 1, 2, 3, 4, 5, 0 ]
+}
+
+[sub_resource type="AnimationNodeAnimation" id=39]
+animation = "attack_left"
+
+[sub_resource type="AnimationNodeAnimation" id=40]
+animation = "attack_down"
+
+[sub_resource type="AnimationNodeAnimation" id=41]
+animation = "attack_right"
+
+[sub_resource type="AnimationNodeAnimation" id=42]
+animation = "attack_up"
+
+[sub_resource type="AnimationNodeBlendSpace2D" id=43]
+blend_point_0/node = SubResource( 39 )
+blend_point_0/pos = Vector2( -1, 0 )
+blend_point_1/node = SubResource( 40 )
+blend_point_1/pos = Vector2( 0, 1.1 )
+blend_point_2/node = SubResource( 41 )
+blend_point_2/pos = Vector2( 1, 0 )
+blend_point_3/node = SubResource( 42 )
+blend_point_3/pos = Vector2( 0, -1.1 )
+min_space = Vector2( -1, -1.1 )
+max_space = Vector2( 1, 1.1 )
+blend_mode = 1
+
+[sub_resource type="AnimationNodeAnimation" id=11]
+animation = "idle_left"
+
+[sub_resource type="AnimationNodeAnimation" id=12]
+animation = "idle_down"
+
+[sub_resource type="AnimationNodeAnimation" id=13]
+animation = "idle_right"
+
+[sub_resource type="AnimationNodeAnimation" id=14]
+animation = "idle_up"
+
+[sub_resource type="AnimationNodeBlendSpace2D" id=15]
+blend_point_0/node = SubResource( 11 )
+blend_point_0/pos = Vector2( -1, 0 )
+blend_point_1/node = SubResource( 12 )
+blend_point_1/pos = Vector2( 0, 1.1 )
+blend_point_2/node = SubResource( 13 )
+blend_point_2/pos = Vector2( 1, 0 )
+blend_point_3/node = SubResource( 14 )
+blend_point_3/pos = Vector2( 0, -1.1 )
+min_space = Vector2( -1, -1.1 )
+max_space = Vector2( 1, 1.1 )
+blend_mode = 1
+
+[sub_resource type="AnimationNodeAnimation" id=51]
+animation = "roll_left"
+
+[sub_resource type="AnimationNodeAnimation" id=53]
+animation = "roll_right"
+
+[sub_resource type="AnimationNodeAnimation" id=58]
+animation = "roll_up"
+
+[sub_resource type="AnimationNodeAnimation" id=59]
+animation = "roll_down"
+
+[sub_resource type="AnimationNodeBlendSpace2D" id=55]
+blend_point_0/node = SubResource( 51 )
+blend_point_0/pos = Vector2( -1, 0 )
+blend_point_1/node = SubResource( 53 )
+blend_point_1/pos = Vector2( 1, 0 )
+blend_point_2/node = SubResource( 58 )
+blend_point_2/pos = Vector2( 0, -1.1 )
+blend_point_3/node = SubResource( 59 )
+blend_point_3/pos = Vector2( 0, 1.1 )
+min_space = Vector2( -1, -1.1 )
+max_space = Vector2( 1, 1.1 )
+blend_mode = 1
+
+[sub_resource type="AnimationNodeAnimation" id=28]
+animation = "run_left"
+
+[sub_resource type="AnimationNodeAnimation" id=29]
+animation = "run_down"
+
+[sub_resource type="AnimationNodeAnimation" id=30]
+animation = "run_right"
+
+[sub_resource type="AnimationNodeAnimation" id=31]
+animation = "run_up"
+
+[sub_resource type="AnimationNodeBlendSpace2D" id=32]
+blend_point_0/node = SubResource( 28 )
+blend_point_0/pos = Vector2( -1, 0 )
+blend_point_1/node = SubResource( 29 )
+blend_point_1/pos = Vector2( 0, 1.1 )
+blend_point_2/node = SubResource( 30 )
+blend_point_2/pos = Vector2( 1, 0 )
+blend_point_3/node = SubResource( 31 )
+blend_point_3/pos = Vector2( 0, -1.1 )
+min_space = Vector2( -1, -1.1 )
+max_space = Vector2( 1, 1.1 )
+blend_mode = 1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=33]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=34]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=44]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=45]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=56]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=57]
+
+[sub_resource type="AnimationNodeStateMachine" id=16]
+states/attack/node = SubResource( 43 )
+states/attack/position = Vector2( 379.444, 196.333 )
+states/idle/node = SubResource( 15 )
+states/idle/position = Vector2( 379, 112.333 )
+states/roll/node = SubResource( 55 )
+states/roll/position = Vector2( 379.492, 16.4548 )
+states/run/node = SubResource( 32 )
+states/run/position = Vector2( 549.667, 113.667 )
+transitions = [ "idle", "run", SubResource( 33 ), "run", "idle", SubResource( 34 ), "idle", "attack", SubResource( 44 ), "attack", "idle", SubResource( 45 ), "roll", "idle", SubResource( 56 ), "idle", "roll", SubResource( 57 ) ]
+start_node = "idle"
+graph_offset = Vector2( -169.032, -20.5018 )
+
+[sub_resource type="AnimationNodeStateMachinePlayback" id=27]
+
+[sub_resource type="CapsuleShape2D" id=46]
+height = 12.0
+
+[sub_resource type="CapsuleShape2D" id=60]
+radius = 6.0
+height = 14.0
+
+[sub_resource type="CapsuleShape2D" id=66]
+radius = 26.0
+height = 10.0
+
+[node name="Player" type="KinematicBody2D"]
+collision_layer = 2
+collision_mask = 9
+script = ExtResource( 1 )
+
+[node name="Shadow" type="Sprite" parent="."]
+position = Vector2( 0, 1 )
+texture = ExtResource( 7 )
+
+[node name="Sprite" type="Sprite" parent="."]
+material = SubResource( 62 )
+position = Vector2( 0, -9 )
+texture = ExtResource( 2 )
+flip_h = true
+hframes = 60
+frame = 32
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = -1.5708
+shape = SubResource( 1 )
+
+[node name="BlinkAnimation" type="AnimationPlayer" parent="."]
+reset_on_save = false
+anims/RESET = SubResource( 65 )
+anims/start = SubResource( 63 )
+anims/stop = SubResource( 64 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/RESET = SubResource( 2 )
+anims/attack_left = SubResource( 36 )
+anims/attack_right = SubResource( 37 )
+anims/idle_left = SubResource( 9 )
+anims/idle_right = SubResource( 4 )
+anims/run_left = SubResource( 7 )
+anims/run_right = SubResource( 3 )
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+tree_root = SubResource( 16 )
+anim_player = NodePath("../AnimationPlayer")
+parameters/playback = SubResource( 27 )
+parameters/attack/blend_position = Vector2( 0, 0 )
+parameters/idle/blend_position = Vector2( 0, 0 )
+parameters/roll/blend_position = Vector2( 0, 0 )
+parameters/run/blend_position = Vector2( 0, 0 )
+
+[node name="HitboxPivot" type="Position2D" parent="."]
+position = Vector2( 0, -4 )
+
+[node name="SwordHitBox" parent="HitboxPivot" instance=ExtResource( 3 )]
+position = Vector2( 17, -3 )
+collision_layer = 4
+collision_mask = 8
+script = ExtResource( 4 )
+
+[node name="CollisionShape2D" parent="HitboxPivot/SwordHitBox" index="0"]
+shape = SubResource( 46 )
+disabled = true
+
+[node name="HurtBox" parent="." instance=ExtResource( 5 )]
+collision_layer = 4
+
+[node name="CollisionShape2D" parent="HurtBox" index="0"]
+position = Vector2( 1, -8 )
+shape = SubResource( 60 )
+
+[node name="HealthUI" parent="." instance=ExtResource( 6 )]
+margin_left = -22.0
+margin_top = -30.0
+margin_right = 18.0
+margin_bottom = 10.0
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 8 )
+
+[node name="EnemyDetectionZone" parent="." instance=ExtResource( 10 )]
+
+[node name="CollisionShape2D" parent="EnemyDetectionZone" index="0"]
+shape = SubResource( 66 )
+
+[connection signal="area_entered" from="HurtBox" to="." method="_on_HurtBox_area_entered"]
+[connection signal="invincibility_ended" from="HurtBox" to="." method="_on_HurtBox_invincibility_ended"]
+[connection signal="invincibility_started" from="HurtBox" to="." method="_on_HurtBox_invincibility_started"]
+
+[editable path="HitboxPivot/SwordHitBox"]
+[editable path="HurtBox"]
+[editable path="EnemyDetectionZone"]
